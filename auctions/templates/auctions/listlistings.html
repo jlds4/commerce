@@ -1,0 +1,21 @@
+<li class="list-group-item">
+    <div>
+        {% if listing.image %}
+             <img src="{{ listing.image.url }}"  class = "float-left mr-4" width="100" height="100" alt="{{ listing.name }}">
+        {% else %}
+            <img src="../media/imgs/noimage.jpg"   class = "float-left mr-4" width="100" height="100" alt="no image">
+        {% endif %}
+        <div>
+        <a  href="{% url 'listing' listing_id=listing.id %}" >
+            <h5>{{ listing.name }}</h5>
+        </a>
+        </div>
+        <a href="{% url 'category' category_type=listing.category %}" class="text-info"> {{listing.category}}</a><br>
+        <p class="mb-2 w-100">{{ listing.description }}</p> <br>
+        {% if listing.currentBid_value %}
+            Current Bid: <strong>${{ listing.currentBid_value }}</strong> <br>
+        {% else %}
+            Starting Bid: <strong>${{ listing.startingBid }} </strong>
+        {% endif %}
+    </div>
+</li>

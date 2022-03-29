@@ -1,0 +1,20 @@
+{% extends "auctions/layout.html" %}
+
+{% block title %}
+    Watchlist
+{% endblock %}
+
+{% block body %}
+
+    {% if listings %}
+        {% for listing in listings %}
+            {% if listing.status == "Ongoing" %}
+                {% include "auctions/listlistings.html" %}
+            {% endif %}
+        {% endfor %}
+    {% else %}
+        There are no listings in your watchlist.
+    {% endif %}
+
+{% endblock %}
+

@@ -1,0 +1,19 @@
+{% extends "auctions/layout.html" %}
+
+{% block title %}
+Auctions
+{% endblock %}
+{% block body %}
+    {% if listings %}
+        <h2>Active Listings</h2> <br>
+        <ul class="list-group">
+        {% for listing in listings %}
+            {% if listing.status == "Ongoing" %}
+                {% include "auctions/listlistings.html" %}
+            {% endif %}
+        {% endfor %}
+        </ul>
+    {% else %}
+        <h3>There are no active listings</h3>
+    {% endif %}
+{% endblock %}

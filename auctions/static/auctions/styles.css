@@ -1,0 +1,18 @@
+body {
+    padding: 10px;
+}
+
+#bid-input {
+    width: 30%;
+    float: right;
+}
+
+#comments {
+    clear: both;
+}
+
+p {
+    width: 375px;
+}
+
+

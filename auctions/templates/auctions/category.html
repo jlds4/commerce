@@ -1,0 +1,17 @@
+{% extends "auctions/layout.html" %}
+
+{% block title %}
+    {{category}}
+{% endblock %}
+
+{% block body %}
+
+    {% if listings %}
+        {% for listing in listings %}
+            {% include "auctions/listlistings.html" %}
+        {% endfor %}
+    {% else %}
+        There are no active listings in this category. <br> <br>
+        <a href ="{% url 'index' %}">Click here to see all active listings.</a>
+    {% endif %}
+{% endblock %}

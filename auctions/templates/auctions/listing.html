@@ -1,0 +1,104 @@
+{% extends "auctions/layout.html" %}
+
+{% block title %}
+    {{ listing.name }}
+{% endblock %}
+
+{% block body %}
+
+    <h4> {{ listing.name }} </h4>
+    {% if user.is_authenticated %}
+        {% if user.id == listing.winner.id %}
+            <p class="text-success"> You won this item! </p>
+        {% endif %}
+    {% endif %}
+    <a href="{% url 'category' category_type=listing.category %}" class="text-info mr-3"> {{listing.category}}</a>
+    Status: {{ listing.status }} <br>
+    {% if listing.image %}
+        <img src="{{ listing.image.url }}" width="300" height="250"  class = "float-left mr-3 mb-3 mt-3" alt="{{ listing.name }}">
+    {% else %}
+         <img src="../media/imgs/noimage.jpg"  width="300" height="250"  class = "float-left mr-3 mb-3 mt-3" alt="no image">
+    {% endif %}
+
+     {% if user.is_authenticated %}
+        {% if user.id != listing.user.id and listing.status == "Ongoing"%}
+        <div class="float-right">
+            <form action="{% url 'bid' listing_id=listing.id %}" method="post">
+                {% csrf_token %}
+                <input class="btn btn-primary float-right mr-3" type="submit" value="Make Bid">
+                <div class="form-group">
+                    <input class="form-control float-right mr-3" id="bid-input" type="number" min="0.01" step="0.01" max="1000" name="bid" placeholder="Your Bid">
+                </div><br>
+            </form>
+            {% if error_message == 'starting' %}
+                <p class="text-danger float-right mr-3">Error: The bid you made is lower than the starting bid </p>
+        </div>
+            {% elif error_message == 'current' %}
+                <p class="text-danger float-right mr-3">Error: The bid you made is lower than the current bid </p>
+        </div>
+            {% else %}
+                <p class="text-danger float-right mr-3"> </p>
+        </div>
+            {% endif %}
+        {% endif %}
+    {% endif %}
+    <div class = "mb-3 mt-4">
+        {% if listing.status == "Ongoing" %}
+            {% if bid %}
+                <strong>Current Bid: </strong>${{ bid.value }}
+                {% if user.is_authenticated %}
+                    {% if bid.user.id == user.id %}
+                        &nbsp&nbsp&nbsp&nbsp <strong>Your bid is the current bid.</strong>
+                    {% endif %}
+                {% endif %}
+                <br>
+            {% else %}
+                <strong>Starting Bid: </strong>${{ listing.startingBid }}<br>
+            {% endif %}
+        {% else %}
+            <strong>Winning Bid: </strong>${{ bid.value }} by <strong>{{bid.user}}</strong>
+        {% endif %}
+    </div>
+<div class="mb-3">{{ listing.description }} <br> </div>
+    {% if user.is_authenticated %}
+        {% if user.id == listing.user.id and listing.status == "Ongoing"%}
+            <form action="{% url 'close_auction' %}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="listing_close" value="{{listing.id}}">
+                    <input class="btn btn-primary" type="submit" value="Close Auction">
+            </form>
+        {% elif listing.status == "Ongoing" %}
+            {% if on_watchlist %}
+                <form action="{% url 'remove_watchlist' %}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="listing" value="{{listing.id}}">
+                    <input class="btn btn-danger" type="submit" value="Remove from watchlist">
+                </form>
+            {% else %}
+                <form action="{% url 'watchlist' %}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="listing" value="{{listing.id}}">
+                    <input class="btn btn-primary" type="submit" value="Add to watchlist">
+                </form>
+            {% endif %}
+        {% endif %}
+
+        <div class = "float-left ml-3" id="comments">
+        {% for comment in comments %}
+        <strong>{{comment.user}}</strong> on {{comment.date}}<br>
+            {{comment.content}}<br><br>
+        {% endfor %}
+        <form action="{% url 'comment' %}" method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <input class="form-control" type="text" name="comment_new" placeholder="Leave a comment!">
+                </div>
+                <input type="hidden" name="listing_comment" value="{{listing.id}}">
+                <input class="btn btn-primary" type="submit" value="Add Comment">
+        </form>
+            </div>
+    {% endif %}
+
+
+
+{% endblock %}
